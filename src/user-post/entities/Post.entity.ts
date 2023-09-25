@@ -1,7 +1,15 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { User } from '../../authentication/entities/user.entity';
 
 @Entity()
-export class post {
+export class Post {
   @PrimaryGeneratedColumn()
   id: number;
   @Column()
@@ -9,7 +17,11 @@ export class post {
   @Column()
   description: string;
   @Column()
-  image: string;
-  // @OneToMany()
-  // CommentId: number;
+  photo: string;
+  @ManyToOne(() => User, (user) => user.posts)
+  user: User;
+  @CreateDateColumn()
+  createdAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
