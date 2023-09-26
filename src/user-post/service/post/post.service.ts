@@ -15,7 +15,10 @@ export class PostService {
       description: post.description,
       photo: post.photo,
     });
-
     return await this.postsRepository.save(newPost);
   }
+  async getPosts(userId: string){
+      // const currentUserPosts = this.postsRepository.findBy()
+      // return await this
+  };
 }

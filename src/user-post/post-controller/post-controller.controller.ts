@@ -12,6 +12,6 @@ export class PostController {
   }
   @Get('getPosts')
   getPosts(@Body() userId: string) {
-    console.log(userId);
+    return userId
   }
 }

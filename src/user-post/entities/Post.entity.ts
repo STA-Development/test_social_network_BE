@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../authentication/entities/user.entity';
+import {JoinColumn} from "typeorm/browser";
 
 @Entity()
 export class Post {

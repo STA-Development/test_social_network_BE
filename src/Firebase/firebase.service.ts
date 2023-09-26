@@ -19,14 +19,16 @@ const firebase_params: object = {
 export class FirebaseApp {
   private firebaseApp: firebase.app.App;
   constructor() {
-    this.firebaseApp = firebase.initializeApp({
-      credential: firebase.credential.cert(firebase_params),
-      databaseURL: 'https://testproject-258d3.firebaseio.com',
-    });
+    if(!firebase.apps.length){
+      this.firebaseApp = firebase.initializeApp({
+        credential: firebase.credential.cert(firebase_params),
+        databaseURL: 'https://testproject-258d3.firebaseio.com',
+      });
+    }else{
+      this.firebaseApp = firebase.apps[0];
+    }
+
   }
-  // FirebaseInitialization = () => {
-  //
-  // };
   getAuth = (): firebase.auth.Auth => {
     console.log(this.firebaseApp);
     return this.firebaseApp.auth();
