@@ -8,4 +8,11 @@ export class PostDto {
   description: string;
   @IsString()
   photo: string;
+  @IsString()
+  userId: string
+}
+
+
+export class getPost{
+  userId: string
 }

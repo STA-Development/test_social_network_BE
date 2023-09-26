@@ -12,7 +12,7 @@ export class AuthService {
     const ifUserExist = this.userRepository.findBy({
       userIdToken: request['user'].user_id
     }).then((result) => {
-      console.log(result, 'this is the result of user search')
+      // console.log(result, 'this is the result of user search')
       if(!result.length){
         const newUser = this.userRepository.create({
           userIdToken:request['user'].user_id

@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { PostDto } from '../dto/post.dto/post.dto';
+import {Body, Controller, Get, Param, Post} from '@nestjs/common';
+import {getPost, PostDto} from '../dto/post.dto/post.dto';
 import { PostService } from '../service/post/post.service';
 
 @Controller('post')
@@ -10,8 +10,9 @@ export class PostController {
     console.log(post);
     return await this.postService.createPost(post);
   }
-  @Get('getPosts')
-  getPosts(@Body() userId: string) {
-    return userId
+  @Get('/userPosts/:userId')
+  getPosts(@Param('userId') userId: string) {
+    console.log(userId, "...userId")
+    return this.postService.getPosts(userId)
   }
 }

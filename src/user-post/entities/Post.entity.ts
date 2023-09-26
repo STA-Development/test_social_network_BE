@@ -5,9 +5,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { User } from '../../authentication/entities/user.entity';
-import {JoinColumn} from "typeorm/browser";
 
 @Entity()
 export class Post {
@@ -19,7 +19,10 @@ export class Post {
   description: string;
   @Column()
   photo: string;
-  @ManyToOne(() => User, (user) => user.posts)
+  @Column()
+  userId: number;
+  @ManyToOne(() => User, (user) => user.posts,{nullable:false})
+  @JoinColumn({name:'userId'})
   user: User;
   @CreateDateColumn()
   createdAt: Date;

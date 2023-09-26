@@ -10,9 +10,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Post } from './entities/Post.entity';
 import { PreauthMiddleware } from '../Middleware/auth/auth.guard';
 import { FirebaseApp } from '../Firebase/firebase.service';
+import {User} from "../authentication/entities/user.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post])],
+  imports: [TypeOrmModule.forFeature([Post,User])],
   controllers: [PostController],
   providers: [PostService, FirebaseApp],
 })
