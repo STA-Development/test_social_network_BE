@@ -9,7 +9,7 @@ import { AuthService } from './auth.service';
 import { PreauthMiddleware } from '../Middleware/auth/auth.guard';
 import { FirebaseApp } from '../Firebase/firebase.service';
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {Post} from "../user-post/entities/Post.entity";
+import {Posts} from "../user-post/entities/Post.entity";
 import {User} from "./entities/user.entity";
 
 @Module({

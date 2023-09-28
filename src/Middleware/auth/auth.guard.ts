@@ -28,7 +28,7 @@ export class PreauthMiddleware implements NestMiddleware {
     const token = req.headers.authorization;
     // console.log(token);
     if (token != null && token != '') {
-      // console.log(token);
+      console.log(token);
       this.auth
         // .auth()
         .verifyIdToken(token.replace('Bearer ', ''))

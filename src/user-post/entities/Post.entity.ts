@@ -10,7 +10,7 @@ import {
 import { User } from '../../authentication/entities/user.entity';
 
 @Entity()
-export class Post {
+export class Posts {
   @PrimaryGeneratedColumn()
   id: number;
   @Column()

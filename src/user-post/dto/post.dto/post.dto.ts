@@ -11,6 +11,16 @@ export class PostDto {
   @IsString()
   userId: string
 }
+export class transferPostDto {
+  @IsString()
+  title: string;
+  @IsString()
+  description: string;
+  @IsString()
+  photo: string;
+  @IsString()
+  userId: number
+}
 
 
 export class getPost{
