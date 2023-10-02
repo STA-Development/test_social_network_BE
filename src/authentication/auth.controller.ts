@@ -5,8 +5,7 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private authService: AuthService) {}
   @Get('verifyUser')
-  create(@Req() request: Request): object {
-    // console.log(request)
+  create(@Req() request: Request): Request {
     return this.authService.getUserInfo(request);
   }
 }

@@ -1,6 +1,8 @@
 import {Injectable} from '@nestjs/common';
 import * as firebase from 'firebase-admin';
 import * as serviceAccount from './firebaseConfig.json';
+import { v4 as uuid } from 'uuid';
+
 
 const { getStorage, getDownloadURL } = require('firebase-admin/storage');
 // const { getStorage, ref,uploadBytes } = require('firebase-admin/storage');
@@ -35,24 +37,26 @@ export class FirebaseApp {
 
   }
   getAuth = (): firebase.auth.Auth => {
-    console.log(this.firebaseApp);
+    // console.log(this.firebaseApp);
     return this.firebaseApp.auth();
   };
   async uploadFile(photo): Promise<string> {
     const storage = firebase.storage();
-    const bucket = storage.bucket()
-    const bucketName = 'testproject-258d3.appspot.com'
-    const file = bucket.file(photo.originalname);
+    const bucket = storage.bucket();
+    const bucketName = 'testproject-258d3.appspot.com';
+    const uniqeFileName = `${uuid()}_${photo.originalname}`
+    const file = bucket.file(uniqeFileName);
+    // const fileStream = file.createWriteStream();//this will overwrite existing file
     const fileStream = file.createWriteStream();
     await new Promise<string>((res,rej) => {
       fileStream.on('finish', () =>  {
         // res(signedUrl[0])
-        res(`gs://${bucketName}/${photo.originalname}`)
+        res(`gs://${bucketName}/${uniqeFileName}`)
       }).on('error', (error) => {
         rej(error)
       }).end(photo.buffer)
     })
-    const fileRef = getStorage().bucket(bucketName).file(photo.originalname);
+    const fileRef = getStorage().bucket(bucketName).file(uniqeFileName);
     return getDownloadURL(fileRef);
   }
 }

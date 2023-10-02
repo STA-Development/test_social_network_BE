@@ -1,28 +1,13 @@
-import { IsString } from 'class-validator'; // npm i class-validator
+import {IsNotEmpty, IsNumber, IsString, MaxLength} from 'class-validator';
 export class PostDto {
-  // @IsNumber()
-  // id: number;
   @IsString()
+  @IsNotEmpty()
+  @MaxLength(80)
   title: string;
   @IsString()
+  @IsNotEmpty()
+  @MaxLength(500)
   description: string;
   @IsString()
-  photo: string;
-  @IsString()
-  userId: string
-}
-export class transferPostDto {
-  @IsString()
-  title: string;
-  @IsString()
-  description: string;
-  @IsString()
-  photo: string;
-  @IsString()
-  userId: number
-}
-
-
-export class getPost{
   userId: string
 }

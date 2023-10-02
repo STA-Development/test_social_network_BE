@@ -10,7 +10,7 @@ import {
   UploadedFile,
   UseInterceptors
 } from '@nestjs/common';
-import {getPost, PostDto, transferPostDto} from '../dto/post.dto/post.dto';
+import {PostDto} from '../dto/post.dto/post.dto';
 import { PostService } from '../service/post/post.service';
 import {Posts} from "../entities/Post.entity";
 import {FileInterceptor} from "@nestjs/platform-express";
@@ -21,7 +21,7 @@ export class PostController {
   constructor(private postService: PostService, private firebase: FirebaseApp) {}
   @Post('createPost')
     @UseInterceptors(FileInterceptor('photo'))
-  create(@Body() postFormData: PostDto, @UploadedFile(
+  create(@Body() postFormData:PostDto, @UploadedFile(
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 5999999 }),
@@ -31,20 +31,22 @@ export class PostController {
   ) photo: Express.Multer.File) {
     return this.postService.createPost(postFormData, photo);
   }
-
-
-  // async create(@Body() post: PostDto): Promise<transferPostDto> {
-  //   console.log(post);
-  //   return await this.postService.createPost(post);
-  // }
   @Get('/userPosts/:userId')
-  async getPosts(@Param('userId') userId: string) {
-    console.log("...get user Posts:")
-    return await this.postService.getPosts(userId)
+  getPosts(@Param('userId') userId: string):Promise<Posts[]> {
+    return this.postService.getPosts(userId)
   }
   @Get('/getAllPosts')
-  async getAllPosts(): Promise<Posts[]>{
+   getAllPosts(): Promise<Posts[]>{
     console.log('...get all posts')
-    return await this.postService.getAllPosts()
+    return this.postService.getAllPosts()
+  }
+  @Get('/getAllPosts/:length')
+  getMorePosts(@Param('length') length: number):Promise<Posts[]>{
+    return this.postService.getMorePosts(length)
+  }
+  @Get('/getUserAllPosts/:length/:uId')
+  getMoreUserPosts(@Param('length') length: number, @Param('uId') uId: string ):Promise<Posts[]>{
+    console.log(length)
+    return this.postService.getMoreUserPosts(length,uId)
   }
 }

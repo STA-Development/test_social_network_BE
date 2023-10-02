@@ -14,8 +14,11 @@ export class AuthService {
     }).then((result) => {
       // console.log(result, 'this is the result of user search')
       if(!result.length){
+        console.log(request['user'])
         const newUser = this.userRepository.create({
-          userIdToken:request['user'].user_id
+          userIdToken: request['user'].user_id,
+          userName: request['user'].name,
+          picture: request['user'].picture
         })
         const response: Promise<User> = this.userRepository.save(newUser);
       }
