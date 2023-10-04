@@ -1,20 +1,21 @@
 import {
   Body,
-  Controller, FileTypeValidator,
+  Controller, Delete, FileTypeValidator,
   Get,
   MaxFileSizeValidator,
   Param,
-  ParseFilePipe,
+  ParseFilePipe, Patch,
   Post,
   Req,
   UploadedFile,
   UseInterceptors
 } from '@nestjs/common';
-import {PostDto} from '../dto/post.dto/post.dto';
+import {EditPostDto, PostDto} from '../dto/post.dto/post.dto';
 import { PostService } from '../service/post/post.service';
 import {Posts} from "../entities/Post.entity";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {FirebaseApp} from "../../Firebase/firebase.service";
+import {Request} from "express";
 
 @Controller('post')
 export class PostController {
@@ -23,6 +24,7 @@ export class PostController {
     @UseInterceptors(FileInterceptor('photo'))
   create(@Body() postFormData:PostDto, @UploadedFile(
       new ParseFilePipe({
+        fileIsRequired: false,
         validators: [
           new MaxFileSizeValidator({ maxSize: 5999999 }),
           new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
@@ -44,9 +46,26 @@ export class PostController {
   getMorePosts(@Param('length') length: number):Promise<Posts[]>{
     return this.postService.getMorePosts(length)
   }
-  @Get('/getUserAllPosts/:length/:uId')
-  getMoreUserPosts(@Param('length') length: number, @Param('uId') uId: string ):Promise<Posts[]>{
-    console.log(length)
-    return this.postService.getMoreUserPosts(length,uId)
+  @Get('/getUserAllPosts/:length')
+  getMoreUserPosts(@Param('length') length: number,@Req() req: Request):Promise<Posts[]>{
+    return this.postService.getMoreUserPosts(length,req['user'].user_id)
+  }
+  @Patch('edit/:postId')
+  @UseInterceptors(FileInterceptor('photo'))
+  editPost(@Param('postId') postId:number,@Req() req: Request ,@Body() editFormData:EditPostDto, @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5999999 }),
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+        ],
+      }),
+  ) photo: Express.Multer.File) {
+    return this.postService.editPost(editFormData, photo,postId, req['user'].user_id);
+  }
+  @Delete('delete/:postId')
+  deletePost(@Param('postId') postId: number, @Req() req: Request):Promise<Posts[]> {
+    console.log(req['user'])
+    return this.postService.deletePost(postId, req['user'].user_id)
   }
 }

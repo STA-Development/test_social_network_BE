@@ -19,9 +19,6 @@ import {User} from "./entities/user.entity";
 })
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
-    consumer.apply(PreauthMiddleware).forRoutes({
-      path: '*',
-      method: RequestMethod.ALL,
-    });
+    consumer.apply(PreauthMiddleware).forRoutes(AuthController);
   }
 }

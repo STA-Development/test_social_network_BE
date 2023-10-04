@@ -45,18 +45,19 @@ export class FirebaseApp {
     const bucket = storage.bucket();
     const bucketName = 'testproject-258d3.appspot.com';
     const uniqeFileName = `${uuid()}_${photo.originalname}`
+    console.log(uniqeFileName,'uniq name')
     const file = bucket.file(uniqeFileName);
     // const fileStream = file.createWriteStream();//this will overwrite existing file
     const fileStream = file.createWriteStream();
     await new Promise<string>((res,rej) => {
       fileStream.on('finish', () =>  {
-        // res(signedUrl[0])
         res(`gs://${bucketName}/${uniqeFileName}`)
       }).on('error', (error) => {
         rej(error)
       }).end(photo.buffer)
     })
     const fileRef = getStorage().bucket(bucketName).file(uniqeFileName);
+    console.log(await getDownloadURL(fileRef))
     return getDownloadURL(fileRef);
   }
 }

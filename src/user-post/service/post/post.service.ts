@@ -1,12 +1,11 @@
 import {Injectable} from '@nestjs/common';
 import {Posts} from '../../entities/Post.entity';
-import {PostDto} from '../../dto/post.dto/post.dto';
-import {Repository} from 'typeorm';
+import {EditPostDto, PostDto} from '../../dto/post.dto/post.dto';
+import {DeleteResult, Repository} from 'typeorm';
 import {InjectRepository} from '@nestjs/typeorm';
 import {User} from "../../../authentication/entities/user.entity";
 import {FirebaseApp} from "../../../Firebase/firebase.service";
-import {firestore} from "firebase-admin";
-import {getAuth} from "firebase-admin/lib/auth";
+import {UserRecord} from "firebase-admin/lib/auth";
 
 @Injectable()
 export class PostService {
@@ -16,22 +15,15 @@ export class PostService {
     private readonly firebaseService: FirebaseApp
   ) {}
   async createPost(post: PostDto, photo: Express.Multer.File): Promise<Posts[]> {
-    // if(!post || !post.title.length || !post.description.length || fileUpload != ""){
-    //   throw new HttpException({
-    //     status: HttpStatus.NOT_ACCEPTABLE,
-    //     error: 'this is not Acceptable!!!'
-    //   },HttpStatus.NOT_ACCEPTABLE)
-    // }
-
     const userId = await this.userRepository.findOne({
       where:{
         userIdToken: post.userId
       }
     });
-    const newPost: any = this.postsRepository.create({
+    const newPost:Posts = this.postsRepository.create({
       title: post.title,
       description: post.description,
-      photo: await this.firebaseService.uploadFile(photo),
+      photo: photo? await this.firebaseService.uploadFile(photo) : null,
       userId: userId.id,
     });
     await this.postsRepository.save(newPost)
@@ -86,24 +78,66 @@ export class PostService {
   }
   async getMoreUserPosts(length: number, uId:string): Promise<Posts[]> {
     console.log(length)
-    const currentUser: User =  await this.userRepository.findOne({
-      where: {
-        userIdToken: uId
-      }
-    })
-    if(!currentUser){
-      throw new Error('Something goes wrong')
+    try {
+      const currentUser: User =  await this.userRepository.findOne({
+        where: {
+          userIdToken: uId
+        }
+      })
+
+      const moreUserPosts: Posts[] = await this.postsRepository.find({
+        where: {
+          userId: currentUser.id
+        },
+        relations:{
+          user: true
+        },
+        skip:length,
+        take: 5
+      })
+      return moreUserPosts
+
+    }catch (e) {
+      throw new Error(e.message)
     }
-    const moreUserPosts: Posts[] = await this.postsRepository.find({
-      where: {
-        userId: currentUser.id
-      },
-      relations:{
-        user: true
-      },
-      skip:length,
-      take: 5
-    })
-    return moreUserPosts
+  }
+
+  async editPost(editFormData:EditPostDto, photo:Express.Multer.File, postId:number, uId:string):Promise<[Posts,string]>{
+    try {
+      const getUserID = await this.userRepository.findOneBy({userIdToken: uId})
+      const getCurrentPost:Posts = await this.postsRepository.findOneBy({
+        id:postId,
+        userId: getUserID.id
+      })
+      console.log(photo,'photo')
+      const oldPostPhoto:string = getCurrentPost.photo
+      getCurrentPost.title = editFormData.title
+      getCurrentPost.description = editFormData.description
+      getCurrentPost.photo = photo? await this.firebaseService.uploadFile(photo):null
+      const updated:Posts = await this.postsRepository.save(getCurrentPost)
+      return [updated, oldPostPhoto]
+    }catch (error){
+      throw new Error(error.message)
+    }
+  }
+  async deletePost(postId:number, uId:string):Promise<Posts[]> {
+    try{
+        const getUserID: User = await this.userRepository.findOneBy({userIdToken:uId})
+        await this.postsRepository.delete({
+          id: postId,
+          userId: getUserID.id
+        })
+        const getPosts:Posts[] = await this.postsRepository.find({
+          where:{
+            userId:getUserID.id
+          },
+          relations:{
+            user: true
+          }
+        })
+        return getPosts
+    }catch(error){
+      throw new Error(error.message)
+    }
   }
 }

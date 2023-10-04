@@ -17,7 +17,7 @@ export class Posts {
   title: string;
   @Column()
   description: string;
-  @Column()
+  @Column({nullable:true})
   photo: string;
   @Column()
   userId: number;

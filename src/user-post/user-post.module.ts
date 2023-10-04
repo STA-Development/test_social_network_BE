@@ -13,21 +13,16 @@ import {User} from "../authentication/entities/user.entity";
   providers: [PostService, FirebaseApp],
 })
 export class UserPostModule implements NestModule {
-  configure(consumer: MiddlewareConsumer): any {
+  configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(PreauthMiddleware)
-      .exclude(
-        {
-          path: 'post/createPost',
-          method: RequestMethod.ALL,
-        },
-        {
-          path: 'post/getPosts',
-          method: RequestMethod.ALL,
+      .exclude({
+        path: '/post/getAllPosts',
+        method: RequestMethod.GET
         },
           {
-              path: 'post/userPosts',
-              method: RequestMethod.GET,
+            path: 'post/getAllPosts/:length',
+            method: RequestMethod.GET
           }
       )
       .forRoutes(PostController);

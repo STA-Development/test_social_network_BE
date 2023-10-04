@@ -11,3 +11,15 @@ export class PostDto {
   @IsString()
   userId: string
 }
+
+
+export class EditPostDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(80)
+  title: string;
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(500)
+  description: string;
+}
