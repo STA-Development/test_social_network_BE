@@ -5,7 +5,7 @@ import {DeleteResult, Repository} from 'typeorm';
 import {InjectRepository} from '@nestjs/typeorm';
 import {User} from "../../../authentication/entities/user.entity";
 import {FirebaseApp} from "../../../Firebase/firebase.service";
-import {UserRecord} from "firebase-admin/lib/auth";
+// import {UserRecord} from "firebase-admin/lib/auth";
 
 @Injectable()
 export class PostService {
@@ -102,19 +102,20 @@ export class PostService {
     }
   }
 
-  async editPost(editFormData:EditPostDto, photo:Express.Multer.File, postId:number, uId:string):Promise<[Posts,string]>{
+  async editPost(editFormData:EditPostDto, photo:Express.Multer.File, postId:number, uId:string):Promise<[Posts[],string]>{
     try {
       const getUserID = await this.userRepository.findOneBy({userIdToken: uId})
       const getCurrentPost:Posts = await this.postsRepository.findOneBy({
         id:postId,
         userId: getUserID.id
       })
-      console.log(photo,'photo')
+      // console.log(photo,'photo')
       const oldPostPhoto:string = getCurrentPost.photo
       getCurrentPost.title = editFormData.title
       getCurrentPost.description = editFormData.description
       getCurrentPost.photo = photo? await this.firebaseService.uploadFile(photo):null
-      const updated:Posts = await this.postsRepository.save(getCurrentPost)
+      await this.postsRepository.save(getCurrentPost)
+      const updated:Posts[] = await this.postsRepository.find({relations:{user:true}})
       return [updated, oldPostPhoto]
     }catch (error){
       throw new Error(error.message)

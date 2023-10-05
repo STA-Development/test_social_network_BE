@@ -6,11 +6,13 @@ import { AuthModule } from './authentication/auth.module';
 import { UserPostModule } from './user-post/user-post.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserCommentModule } from './user-comment/user-comment.module';
 
 @Module({
   imports: [
     AuthModule,
     UserPostModule,
+    UserCommentModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({

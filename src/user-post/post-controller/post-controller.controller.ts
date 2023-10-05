@@ -19,7 +19,7 @@ import {Request} from "express";
 
 @Controller('post')
 export class PostController {
-  constructor(private postService: PostService, private firebase: FirebaseApp) {}
+  constructor(private postService: PostService) {}
   @Post('createPost')
     @UseInterceptors(FileInterceptor('photo'))
   create(@Body() postFormData:PostDto, @UploadedFile(
@@ -60,8 +60,8 @@ export class PostController {
           new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
         ],
       }),
-  ) photo: Express.Multer.File) {
-    return this.postService.editPost(editFormData, photo,postId, req['user'].user_id);
+  ) photo: Express.Multer.File):Promise<[Posts[],string]> {
+    return this.postService.editPost(editFormData, photo, postId, req['user'].user_id);
   }
   @Delete('delete/:postId')
   deletePost(@Param('postId') postId: number, @Req() req: Request):Promise<Posts[]> {

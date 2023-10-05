@@ -6,8 +6,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from '../../authentication/entities/user.entity';
+import {Comments} from "../../user-comment/entities/Comments.entity";
 
 @Entity()
 export class Posts {
@@ -19,11 +21,16 @@ export class Posts {
   description: string;
   @Column({nullable:true})
   photo: string;
+  // !!!!!! User Connection !!!!!!
   @Column()
   userId: number;
-  @ManyToOne(() => User, (user) => user.posts,{nullable:false})
+  @ManyToOne(() => User, (user:User) => user.posts,{nullable:false})
   @JoinColumn({name:'userId'})
   user: User;
+  //  !!!!!! Comment Connection !!!!!!
+  @OneToMany(()=> Comments, (comments:Comments) =>  comments.postId)
+  comments: Comments[];
+
   @CreateDateColumn()
   createdAt: Date;
   @UpdateDateColumn()

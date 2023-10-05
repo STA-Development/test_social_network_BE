@@ -24,7 +24,7 @@ export class PreauthMiddleware implements NestMiddleware {
     this.auth = firebaseApp.getAuth();
   }
   use(req: Request, res: Response, next: NextFunction) {
-    console.log('Request...');
+    // console.log('Request...');
     const token = req.headers.authorization;
     // console.log(token);
     if (token != null && token != '') {
