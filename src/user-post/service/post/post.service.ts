@@ -5,6 +5,7 @@ import {DeleteResult, Repository} from 'typeorm';
 import {InjectRepository} from '@nestjs/typeorm';
 import {User} from "../../../authentication/entities/user.entity";
 import {FirebaseApp} from "../../../Firebase/firebase.service";
+import {NotFoundError} from "rxjs";
 // import {UserRecord} from "firebase-admin/lib/auth";
 
 @Injectable()
@@ -115,13 +116,19 @@ export class PostService {
       getCurrentPost.description = editFormData.description
       getCurrentPost.photo = photo? await this.firebaseService.uploadFile(photo):null
       await this.postsRepository.save(getCurrentPost)
-      const updated:Posts[] = await this.postsRepository.find({relations:{user:true}})
+      const updated:Posts[] = await this.postsRepository.find({
+        where:{
+          userId:getUserID.id
+        },
+        relations:{user:true}
+      })
       return [updated, oldPostPhoto]
     }catch (error){
-      throw new Error(error.message)
+      throw new NotFoundError('User not found please sign in to your account')
     }
   }
   async deletePost(postId:number, uId:string):Promise<Posts[]> {
+    console.log(uId)
     try{
         const getUserID: User = await this.userRepository.findOneBy({userIdToken:uId})
         await this.postsRepository.delete({

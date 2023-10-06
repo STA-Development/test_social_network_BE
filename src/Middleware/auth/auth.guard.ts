@@ -51,6 +51,7 @@ export class PreauthMiddleware implements NestMiddleware {
     }
   }
   private accessDenied(url: string, res: Response): void {
+    console.log(url)
     res.status(403).json({
       statusCode: 403,
       timestamp: new Date().toISOString(),

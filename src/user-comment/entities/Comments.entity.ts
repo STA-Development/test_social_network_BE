@@ -19,7 +19,7 @@ export class Comments {
     // !!!!!! Post Connection !!!!!!
     @Column()
     postId: number;
-    @ManyToOne(() => Posts, (posts:Posts) => posts.comments)
+    @ManyToOne(() => Posts, (posts:Posts) => posts.comments, { onDelete: 'CASCADE' })
     @JoinColumn({name:'postId'})
     post: Posts;
     // !!!!!! User Connection !!!!!!
