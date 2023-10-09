@@ -61,7 +61,7 @@ export class PostController {
         ],
       }),
   ) photo: Express.Multer.File):Promise<[Posts[],string]> {
-    return this.postService.editPost(editFormData, photo, postId, req['user'].user_id);
+    return this.postService.editPost(editFormData, photo,postId, req['user'].user_id);
   }
   @Delete('delete/:postId')
   deletePost(@Param('postId') postId: number, @Req() req: Request):Promise<Posts[]> {

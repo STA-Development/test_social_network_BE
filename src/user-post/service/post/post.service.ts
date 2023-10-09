@@ -110,11 +110,16 @@ export class PostService {
         id:postId,
         userId: getUserID.id
       })
-      // console.log(photo,'photo')
+      console.log(photo,'photo')
       const oldPostPhoto:string = getCurrentPost.photo
       getCurrentPost.title = editFormData.title
       getCurrentPost.description = editFormData.description
-      getCurrentPost.photo = photo? await this.firebaseService.uploadFile(photo):null
+      if(editFormData.delete ==='true'){
+        getCurrentPost.photo = ''
+      }
+      if(photo){
+        getCurrentPost.photo = await this.firebaseService.uploadFile(photo)
+      }
       await this.postsRepository.save(getCurrentPost)
       const updated:Posts[] = await this.postsRepository.find({
         where:{

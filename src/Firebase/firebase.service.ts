@@ -60,4 +60,10 @@ export class FirebaseApp {
     console.log(await getDownloadURL(fileRef))
     return getDownloadURL(fileRef);
   }
+  // async deleteFile(photo):Promise<void>{
+  //   const storage = firebase.storage();
+  //   const bucket = storage.bucket();
+  //   const bucketName = 'testproject-258d3.appspot.com';
+  //   const file = bucket.file()
+  // }
 }
