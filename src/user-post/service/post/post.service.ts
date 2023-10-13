@@ -38,8 +38,11 @@ export class PostService {
       relations: {
         user: true,
       },
+      order: {
+        createdAt: 'DESC',
+      },
     });
-    return createdPost;
+    return createdPost.reverse();
   }
   async getPosts(userId: string) {
     const getUser: User = await this.userRepository
@@ -152,8 +155,11 @@ export class PostService {
           userId: getUserID.id,
         },
         relations: { user: true },
+        order: {
+          createdAt: 'DESC',
+        },
       });
-      return [updated.reverse(), oldPostPhoto];
+      return [updated, oldPostPhoto];
     } catch (error) {
       throw new NotFoundError('User not found please sign in to your account');
     }
@@ -175,8 +181,11 @@ export class PostService {
         relations: {
           user: true,
         },
+        order: {
+          createdAt: 'DESC',
+        },
       });
-      return getPosts.reverse();
+      return getPosts;
     } catch (error) {
       throw new Error(error.message);
     }
