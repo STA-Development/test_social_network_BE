@@ -8,8 +8,7 @@ export class AuthService {
   constructor(@InjectRepository(User) private userRepository: Repository<User>) {
   }
   getUserInfo(request: Request): Request {
-    // console.log(request['user'].user_id)
-    const ifUserExist = this.userRepository.findBy({
+    const ifUserExist:Promise<void> = this.userRepository.findBy({
       userIdToken: request['user'].user_id
     }).then((result:User[]) => {
       // console.log(result, 'this is the result of user search')

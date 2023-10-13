@@ -21,6 +21,10 @@ export class UserPostModule implements NestModule {
         method: RequestMethod.GET
         },
           {
+            path: 'post/getAllPostsLength',
+            method: RequestMethod.GET
+          },
+          {
             path: 'post/getAllPosts/:length',
             method: RequestMethod.GET
           }

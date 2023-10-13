@@ -8,7 +8,7 @@ export class User {
   id: number;
   @Column()
   userName: string;
-  @Column()
+  @Column({nullable:true})
   picture: string;
   @Column()
   userIdToken: string;

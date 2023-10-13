@@ -14,7 +14,6 @@ export class PostDto {
 
 
 export class EditPostDto {
-
   delete: string
   @IsString()
   @IsNotEmpty()
@@ -24,5 +23,4 @@ export class EditPostDto {
   @IsNotEmpty()
   @MaxLength(500)
   description: string;
-
 }

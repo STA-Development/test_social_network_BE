@@ -24,7 +24,7 @@ export class Posts {
   // !!!!!! User Connection !!!!!!
   @Column()
   userId: number;
-  @ManyToOne(() => User, (user:User) => user.posts,{nullable:false})
+  @ManyToOne(() => User, (user:User) => user.posts,{nullable:false,onDelete:'CASCADE'})
   @JoinColumn({name:'userId'})
   user: User;
   //  !!!!!! Comment Connection !!!!!!

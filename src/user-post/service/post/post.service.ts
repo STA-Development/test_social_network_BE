@@ -43,10 +43,10 @@ export class PostService {
       where: {
         userIdToken: userId
       }
+    }).catch((error) => {
+      throw new Error('Something goes wrong')
     })
-    if(!getUser){
-       throw new Error('Something goes wrong')
-    }
+
     const userPosts:Posts[] = await this.postsRepository.find({
       where: {
         userId: getUser.id
@@ -59,7 +59,7 @@ export class PostService {
     return userPosts
   };
   async getAllPosts(): Promise<Posts[]>{
-    const allPosts = await this.postsRepository.find({
+    const allPosts:Posts[] = await this.postsRepository.find({
       relations:{
         user: true
       },
@@ -76,6 +76,21 @@ export class PostService {
       take: 10,
     })
     return morePosts
+  }
+  async getAllPostsLength():Promise<number>{
+    const allPosts:Posts[] = await this.postsRepository.find()
+    return allPosts.length
+  }
+  async getAllUserPostsLength(userId:string) {
+    const getUser:User = await this.userRepository.findOneBy({
+      userIdToken: userId
+    })
+    const allPosts:Posts[] = await this.postsRepository.find({
+      where: {
+        userId: getUser.id
+      }
+    })
+    return allPosts.length
   }
   async getMoreUserPosts(length: number, uId:string): Promise<Posts[]> {
     console.log(length)
@@ -127,7 +142,7 @@ export class PostService {
         },
         relations:{user:true}
       })
-      return [updated, oldPostPhoto]
+      return [updated.reverse(), oldPostPhoto]
     }catch (error){
       throw new NotFoundError('User not found please sign in to your account')
     }
@@ -148,7 +163,7 @@ export class PostService {
             user: true
           }
         })
-        return getPosts
+        return getPosts.reverse()
     }catch(error){
       throw new Error(error.message)
     }

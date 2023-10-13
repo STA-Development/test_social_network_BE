@@ -6,6 +6,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
   @Get('verifyUser')
   create(@Req() request: Request): Request {
+    console.log(request['user'].displayName)
     return this.authService.getUserInfo(request);
   }
 }

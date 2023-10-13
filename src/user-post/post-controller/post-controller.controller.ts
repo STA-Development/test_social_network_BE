@@ -21,7 +21,7 @@ import {Request} from "express";
 export class PostController {
   constructor(private postService: PostService) {}
   @Post('createPost')
-    @UseInterceptors(FileInterceptor('photo'))
+  @UseInterceptors(FileInterceptor('photo'))
   create(@Body() postFormData:PostDto, @UploadedFile(
       new ParseFilePipe({
         fileIsRequired: false,
@@ -38,7 +38,7 @@ export class PostController {
     return this.postService.getPosts(userId)
   }
   @Get('/getAllPosts')
-   getAllPosts(): Promise<Posts[]>{
+  getAllPosts(): Promise<Posts[]>{
     console.log('...get all posts')
     return this.postService.getAllPosts()
   }
@@ -49,6 +49,14 @@ export class PostController {
   @Get('/getUserAllPosts/:length')
   getMoreUserPosts(@Param('length') length: number,@Req() req: Request):Promise<Posts[]>{
     return this.postService.getMoreUserPosts(length,req['user'].user_id)
+  }
+  @Get('/getAllPostsLength')
+  getAllPostsLength():Promise<number>{
+    return this.postService.getAllPostsLength()
+  }
+  @Get('/getAllUserPostsLength')
+  getAllUserPostsLength(@Req() req:Request):Promise<number>{
+    return this.postService.getAllUserPostsLength(req['user'].user_id)
   }
   @Patch('edit/:postId')
   @UseInterceptors(FileInterceptor('photo'))
@@ -65,7 +73,6 @@ export class PostController {
   }
   @Delete('delete/:postId')
   deletePost(@Param('postId') postId: number, @Req() req: Request):Promise<Posts[]> {
-    console.log(req['user'])
     return this.postService.deletePost(postId, req['user'].user_id)
   }
 }
