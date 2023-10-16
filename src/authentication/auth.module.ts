@@ -1,16 +1,10 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { AuthController } from './controller/auth.controller';
+import { AuthService } from './service/auth.service';
 import { PreauthMiddleware } from '../Middleware/auth/auth.guard';
 import { FirebaseApp } from '../Firebase/firebase.service';
-import {TypeOrmModule} from "@nestjs/typeorm";
-import {Posts} from "../user-post/entities/Post.entity";
-import {User} from "./entities/user.entity";
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],

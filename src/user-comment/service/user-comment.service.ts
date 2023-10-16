@@ -12,7 +12,7 @@ export class UserCommentService {
     @InjectRepository(User) private readonly user: Repository<User>,
   ) {}
   async getAllComments(postId: number): Promise<Comments[]> {
-    const getAllCommentsForPost = await this.comments.find({
+    const getAllCommentsForPost: Comments[] = await this.comments.find({
       where: {
         postId: postId,
       },
@@ -28,7 +28,7 @@ export class UserCommentService {
   ): Promise<Comments[]> {
     console.log(uId);
     try {
-      const getUserId: User[] = await this.user.find({
+      const [getUserId] = await this.user.find({
         where: {
           userIdToken: uId,
         },
@@ -38,7 +38,7 @@ export class UserCommentService {
       });
       const newComment: Comments = this.comments.create({
         comment: comment.comment,
-        userId: getUserId[0].id,
+        userId: getUserId.id,
         postId: comment.postId,
       });
       await this.comments.save(newComment);

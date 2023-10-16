@@ -14,7 +14,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { EditPostDto, PostDto } from '../dto/post.dto/post.dto';
-import { PostService } from '../service/post/post.service';
+import { PostService } from '../service/post.service';
 import { Posts } from '../entities/Post.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
@@ -24,7 +24,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Post')
 export class PostController {
   constructor(private postService: PostService) {}
-  @Post('createPost')
+  @Post('')
   @UseInterceptors(FileInterceptor('photo'))
   create(
     @Body() postFormData: PostDto,
@@ -32,16 +32,16 @@ export class PostController {
       new ParseFilePipe({
         fileIsRequired: false,
         validators: [
-          new MaxFileSizeValidator({ maxSize: 5999999 }),
+          new MaxFileSizeValidator({ maxSize: 10000000 }),
           new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
         ],
       }),
     )
     photo: Express.Multer.File,
-  ) {
+  ): Promise<Posts[]> {
     return this.postService.createPost(postFormData, photo);
   }
-  @Get('/userPosts/:userId')
+  @Get('user/:userId')
   getPosts(@Param('userId') userId: string): Promise<Posts[]> {
     return this.postService.getPosts(userId);
   }
@@ -79,7 +79,7 @@ export class PostController {
       new ParseFilePipe({
         fileIsRequired: false,
         validators: [
-          new MaxFileSizeValidator({ maxSize: 5999999 }),
+          new MaxFileSizeValidator({ maxSize: 10000000 }),
           new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
         ],
       }),

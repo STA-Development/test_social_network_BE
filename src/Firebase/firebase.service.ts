@@ -1,11 +1,9 @@
-import {Injectable} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as firebase from 'firebase-admin';
 import * as serviceAccount from './firebaseConfig.json';
 import { v4 as uuid } from 'uuid';
 
-
 const { getStorage, getDownloadURL } = require('firebase-admin/storage');
-// const { getStorage, ref,uploadBytes } = require('firebase-admin/storage');
 
 const firebase_params: object = {
   type: serviceAccount.type,
@@ -25,16 +23,15 @@ const firebase_params: object = {
 export class FirebaseApp {
   private firebaseApp: firebase.app.App;
   constructor() {
-    if(!firebase.apps.length){
+    if (!firebase.apps.length) {
       this.firebaseApp = firebase.initializeApp({
         credential: firebase.credential.cert(firebase_params),
         databaseURL: 'https://testproject-258d3.firebaseio.com',
-        storageBucket: 'gs://testproject-258d3.appspot.com'
+        storageBucket: 'gs://testproject-258d3.appspot.com',
       });
-    }else{
+    } else {
       this.firebaseApp = firebase.apps[0];
     }
-
   }
   getAuth = (): firebase.auth.Auth => {
     // console.log(this.firebaseApp);
@@ -44,26 +41,21 @@ export class FirebaseApp {
     const storage = firebase.storage();
     const bucket = storage.bucket();
     const bucketName = 'testproject-258d3.appspot.com';
-    const uniqeFileName = `${uuid()}_${photo.originalname}`
-    console.log(uniqeFileName,'uniq name')
+    const uniqeFileName = `${uuid()}_${photo.originalname}`;
     const file = bucket.file(uniqeFileName);
     // const fileStream = file.createWriteStream();//this will overwrite existing file
     const fileStream = file.createWriteStream();
-    await new Promise<string>((res,rej) => {
-      fileStream.on('finish', () =>  {
-        res(`gs://${bucketName}/${uniqeFileName}`)
-      }).on('error', (error) => {
-        rej(error)
-      }).end(photo.buffer)
-    })
+    await new Promise<string>((res, rej) => {
+      fileStream
+        .on('finish', () => {
+          res(`gs://${bucketName}/${uniqeFileName}`);
+        })
+        .on('error', (error) => {
+          rej(error);
+        })
+        .end(photo.buffer);
+    });
     const fileRef = getStorage().bucket(bucketName).file(uniqeFileName);
-    console.log(await getDownloadURL(fileRef))
     return getDownloadURL(fileRef);
   }
-  // async deleteFile(photo):Promise<void>{
-  //   const storage = firebase.storage();
-  //   const bucket = storage.bucket();
-  //   const bucketName = 'testproject-258d3.appspot.com';
-  //   const file = bucket.file()
-  // }
 }

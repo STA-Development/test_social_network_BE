@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Posts } from '../../entities/Post.entity';
-import { EditPostDto, PostDto } from '../../dto/post.dto/post.dto';
-import { DeleteResult, Repository } from 'typeorm';
+import { Posts } from '../entities/Post.entity';
+import { EditPostDto, PostDto } from '../dto/post.dto/post.dto';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../../../authentication/entities/user.entity';
-import { FirebaseApp } from '../../../Firebase/firebase.service';
+import { User } from '../../authentication/entities/user.entity';
+import { FirebaseApp } from '../../Firebase/firebase.service';
 import { NotFoundError } from 'rxjs';
-// import {UserRecord} from "firebase-admin/lib/auth";
 
 @Injectable()
 export class PostService {
@@ -44,14 +43,14 @@ export class PostService {
     });
     return createdPost.reverse();
   }
-  async getPosts(userId: string) {
+  async getPosts(userId: string): Promise<Posts[]> {
     const getUser: User = await this.userRepository
       .findOne({
         where: {
           userIdToken: userId,
         },
       })
-      .catch((error) => {
+      .catch(() => {
         throw new Error('Something goes wrong');
       });
 
@@ -139,7 +138,6 @@ export class PostService {
         id: postId,
         userId: getUserID.id,
       });
-      console.log(photo, 'photo');
       const oldPostPhoto: string = getCurrentPost.photo;
       getCurrentPost.title = editFormData.title;
       getCurrentPost.description = editFormData.description;

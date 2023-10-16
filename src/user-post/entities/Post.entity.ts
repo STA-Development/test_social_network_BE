@@ -9,7 +9,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { User } from '../../authentication/entities/user.entity';
-import {Comments} from "../../user-comment/entities/Comments.entity";
+import { Comments } from '../../user-comment/entities/Comments.entity';
 
 @Entity()
 export class Posts {
@@ -19,16 +19,19 @@ export class Posts {
   title: string;
   @Column()
   description: string;
-  @Column({nullable:true})
+  @Column({ nullable: true })
   photo: string;
-  // !!!!!! User Connection !!!!!!
+
   @Column()
   userId: number;
-  @ManyToOne(() => User, (user:User) => user.posts,{nullable:false,onDelete:'CASCADE'})
-  @JoinColumn({name:'userId'})
+  @ManyToOne(() => User, (user: User) => user.posts, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'userId' })
   user: User;
-  //  !!!!!! Comment Connection !!!!!!
-  @OneToMany(()=> Comments, (comments:Comments) =>  comments.postId)
+
+  @OneToMany(() => Comments, (comments: Comments) => comments.postId)
   comments: Comments[];
 
   @CreateDateColumn()

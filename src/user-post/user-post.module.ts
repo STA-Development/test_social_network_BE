@@ -4,8 +4,8 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { PostController } from './post-controller/post-controller.controller';
-import { PostService } from './service/post/post.service';
+import { PostController } from './controller/post.controller';
+import { PostService } from './service/post.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Posts } from './entities/Post.entity';
 import { PreauthMiddleware } from '../Middleware/auth/auth.guard';

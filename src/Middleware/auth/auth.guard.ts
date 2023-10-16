@@ -8,7 +8,7 @@ import UserRecord = auth.UserRecord;
 @Injectable()
 export class PreauthMiddleware implements NestMiddleware {
   private auth: firebase.auth.Auth;
-  constructor(private firebaseApp: FirebaseApp) {
+  constructor(private readonly firebaseApp: FirebaseApp) {
     this.auth = firebaseApp.getAuth();
   }
   async use(req: Request, res: Response, next: NextFunction) {
