@@ -156,7 +156,7 @@ export class PostService {
         },
         relations: { user: true },
         order: {
-          createdAt: 'DESC',
+          updatedAt: 'DESC',
         },
       });
       return [updated, oldPostPhoto];
@@ -180,9 +180,6 @@ export class PostService {
         },
         relations: {
           user: true,
-        },
-        order: {
-          createdAt: 'DESC',
         },
       });
       return getPosts;
