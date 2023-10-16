@@ -17,10 +17,11 @@ import { EditPostDto, PostDto } from '../dto/post.dto/post.dto';
 import { PostService } from '../service/post/post.service';
 import { Posts } from '../entities/Post.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FirebaseApp } from '../../Firebase/firebase.service';
 import { Request } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('post')
+@ApiTags('Post')
 export class PostController {
   constructor(private postService: PostService) {}
   @Post('createPost')
