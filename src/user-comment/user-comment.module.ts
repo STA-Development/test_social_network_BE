@@ -10,7 +10,7 @@ import { FirebaseApp } from '../Firebase/firebase.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Posts } from '../user-post/entities/Post.entity';
 import { User } from '../authentication/entities/user.entity';
-import { PreauthMiddleware } from '../Middleware/auth/auth.guard';
+import { PreAuthMiddleware } from '../Middleware/auth/auth.guard';
 import { Comments } from './entities/Comments.entity';
 
 @Module({
@@ -21,7 +21,7 @@ import { Comments } from './entities/Comments.entity';
 export class UserCommentModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(PreauthMiddleware)
+      .apply(PreAuthMiddleware)
       .exclude({
         path: '/comment/allComments/:postId',
         method: RequestMethod.GET,

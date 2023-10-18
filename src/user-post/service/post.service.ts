@@ -18,16 +18,19 @@ export class PostService {
     post: PostDto,
     photo: Express.Multer.File,
   ): Promise<Posts[]> {
-    const userId = await this.userRepository.findOne({
+    const { id } = await this.userRepository.findOne({
       where: {
         userIdToken: post.userId,
+      },
+      select: {
+        id: true,
       },
     });
     const newPost: Posts = this.postsRepository.create({
       title: post.title,
       description: post.description,
       photo: photo ? await this.firebaseService.uploadFile(photo) : null,
-      userId: userId.id,
+      userId: id,
     });
     await this.postsRepository.save(newPost);
     const createdPost: Posts[] = await this.postsRepository.find({
@@ -53,7 +56,6 @@ export class PostService {
       .catch(() => {
         throw new Error('Something goes wrong');
       });
-
     const userPosts: Posts[] = await this.postsRepository.find({
       where: {
         userId: getUser.id,
@@ -100,7 +102,6 @@ export class PostService {
     return allPosts.length;
   }
   async getMoreUserPosts(length: number, uId: string): Promise<Posts[]> {
-    console.log(length);
     try {
       const currentUser: User = await this.userRepository.findOne({
         where: {
@@ -163,7 +164,6 @@ export class PostService {
     }
   }
   async deletePost(postId: number, uId: string): Promise<Posts[]> {
-    console.log(uId);
     try {
       const getUserID: User = await this.userRepository.findOneBy({
         userIdToken: uId,

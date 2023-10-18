@@ -6,21 +6,18 @@ import { auth } from 'firebase-admin';
 import UserRecord = auth.UserRecord;
 
 @Injectable()
-export class PreauthMiddleware implements NestMiddleware {
+export class PreAuthMiddleware implements NestMiddleware {
   private auth: firebase.auth.Auth;
   constructor(private readonly firebaseApp: FirebaseApp) {
     this.auth = firebaseApp.getAuth();
   }
   async use(req: Request, res: Response, next: NextFunction) {
-    // console.log('Request...');
-    const token = req.headers.authorization;
+    const token: string = req.headers.authorization;
     if (token !== null && token !== '') {
-      // console.log(token);
       try {
         const decodedToken = await this.auth.verifyIdToken(
           token.replace('Bearer ', ''),
         );
-        console.log(decodedToken);
         const authUserInfo: UserRecord = await firebase
           .auth()
           .getUser(decodedToken.uid);
@@ -32,7 +29,6 @@ export class PreauthMiddleware implements NestMiddleware {
         };
         next();
       } catch (error) {
-        console.error(error);
         this.accessDenied(req.url, res);
       }
     } else {
@@ -40,7 +36,6 @@ export class PreauthMiddleware implements NestMiddleware {
     }
   }
   private accessDenied(url: string, res: Response): void {
-    console.log(url);
     res.status(403).json({
       statusCode: 403,
       timestamp: new Date().toISOString(),

@@ -47,7 +47,6 @@ export class PostController {
   }
   @Get('/getAllPosts')
   getAllPosts(): Promise<Posts[]> {
-    console.log('...get all posts');
     return this.postService.getAllPosts();
   }
   @Get('/getAllPosts/:length')

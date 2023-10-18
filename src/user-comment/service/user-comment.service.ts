@@ -26,7 +26,6 @@ export class UserCommentService {
     comment: CommentDto,
     uId: string,
   ): Promise<Comments[]> {
-    console.log(uId);
     try {
       const [getUserId] = await this.user.find({
         where: {

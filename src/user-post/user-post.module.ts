@@ -8,7 +8,7 @@ import { PostController } from './controller/post.controller';
 import { PostService } from './service/post.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Posts } from './entities/Post.entity';
-import { PreauthMiddleware } from '../Middleware/auth/auth.guard';
+import { PreAuthMiddleware } from '../Middleware/auth/auth.guard';
 import { FirebaseApp } from '../Firebase/firebase.service';
 import { User } from '../authentication/entities/user.entity';
 
@@ -20,7 +20,7 @@ import { User } from '../authentication/entities/user.entity';
 export class UserPostModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(PreauthMiddleware)
+      .apply(PreAuthMiddleware)
       .exclude(
         {
           path: '/post/getAllPosts',
