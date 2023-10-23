@@ -23,7 +23,7 @@ export class UserCommentModule implements NestModule {
     consumer
       .apply(PreAuthMiddleware)
       .exclude({
-        path: '/comment/allComments/:postId',
+        path: '/comment/getAll/:postId',
         method: RequestMethod.GET,
       })
       .forRoutes(UserCommentController);

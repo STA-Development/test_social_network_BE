@@ -8,11 +8,11 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Comment')
 export class UserCommentController {
   constructor(private readonly commentsService: UserCommentService) {}
-  @Get('allComments/:postId')
+  @Get('getAll/:postId')
   getAll(@Param('postId') postId: number): Promise<Comments[]> {
     return this.commentsService.getAllComments(postId);
   }
-  @Post('addComment')
+  @Post('/addComment')
   addComment(
     @Body() comment: CommentDto,
     @Req() req: Request,

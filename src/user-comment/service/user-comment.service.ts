@@ -27,7 +27,38 @@ export class UserCommentService {
     uId: string,
   ): Promise<Comments[]> {
     try {
-      const [getUserId] = await this.user.find({
+      const newComment: Comments = this.comments.create({
+        comment: comment.comment,
+        userId: await this.getUserIdByToken(uId),
+        postId: comment.postId,
+      });
+      await this.comments.save(newComment);
+      const commentsById: Comments[] = await this.getCommentsById(
+        newComment.id,
+      );
+      return commentsById;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  }
+  private async getCommentsById(newCommentId: number): Promise<Comments[]> {
+    try {
+      const comments: Comments[] = await this.comments.find({
+        where: {
+          id: newCommentId,
+        },
+        relations: {
+          user: true,
+        },
+      });
+      return comments;
+    } catch (error) {
+      throw new Error(error.message());
+    }
+  }
+  private async getUserIdByToken(uId: string) {
+    try {
+      const { id } = await this.user.findOne({
         where: {
           userIdToken: uId,
         },
@@ -35,23 +66,9 @@ export class UserCommentService {
           id: true,
         },
       });
-      const newComment: Comments = this.comments.create({
-        comment: comment.comment,
-        userId: getUserId.id,
-        postId: comment.postId,
-      });
-      await this.comments.save(newComment);
-      const getNewPost: Comments[] = await this.comments.find({
-        where: {
-          id: newComment.id,
-        },
-        relations: {
-          user: true,
-        },
-      });
-      return getNewPost;
-    } catch (e) {
-      throw new Error(e.message);
+      return id;
+    } catch (error) {
+      throw new Error(error.message);
     }
   }
 }

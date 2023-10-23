@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Posts } from '../entities/Post.entity';
-import { EditPostDto, PostDto } from '../dto/post.dto/post.dto';
+import { EditPostDto, PostDto } from '../dto/post.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../authentication/entities/user.entity';
@@ -18,14 +18,7 @@ export class PostService {
     post: PostDto,
     photo: Express.Multer.File,
   ): Promise<Posts[]> {
-    const { id } = await this.userRepository.findOne({
-      where: {
-        userIdToken: post.userId,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const { id } = await this.getUserByIdToken(post.userId);
     const newPost: Posts = this.postsRepository.create({
       title: post.title,
       description: post.description,
@@ -44,21 +37,13 @@ export class PostService {
         createdAt: 'DESC',
       },
     });
-    return createdPost.reverse();
+    return createdPost;
   }
-  async getPosts(userId: string): Promise<Posts[]> {
-    const getUser: User = await this.userRepository
-      .findOne({
-        where: {
-          userIdToken: userId,
-        },
-      })
-      .catch(() => {
-        throw new Error('Something goes wrong');
-      });
+  async getPosts(uId: string): Promise<Posts[]> {
+    const { id } = await this.getUserByIdToken(uId);
     const userPosts: Posts[] = await this.postsRepository.find({
       where: {
-        userId: getUser.id,
+        userId: id,
       },
       relations: {
         user: true,
@@ -87,31 +72,25 @@ export class PostService {
     return morePosts;
   }
   async getAllPostsLength(): Promise<number> {
-    const allPosts: Posts[] = await this.postsRepository.find();
-    return allPosts.length;
+    const allPostsCount: number = await this.postsRepository.count();
+    return allPostsCount;
   }
-  async getAllUserPostsLength(userId: string) {
-    const getUser: User = await this.userRepository.findOneBy({
-      userIdToken: userId,
-    });
-    const allPosts: Posts[] = await this.postsRepository.find({
+  async getAllUserPostsLength(uId: string) {
+    const { id } = await this.getUserByIdToken(uId);
+    const allUserPostsCount: number = await this.postsRepository.count({
       where: {
-        userId: getUser.id,
+        userId: id,
       },
     });
-    return allPosts.length;
+    return allUserPostsCount;
   }
   async getMoreUserPosts(length: number, uId: string): Promise<Posts[]> {
     try {
-      const currentUser: User = await this.userRepository.findOne({
-        where: {
-          userIdToken: uId,
-        },
-      });
+      const { id } = await this.getUserByIdToken(uId);
 
       const moreUserPosts: Posts[] = await this.postsRepository.find({
         where: {
-          userId: currentUser.id,
+          userId: id,
         },
         relations: {
           user: true,
@@ -132,12 +111,10 @@ export class PostService {
     uId: string,
   ): Promise<[Posts[], string]> {
     try {
-      const getUserID: User = await this.userRepository.findOneBy({
-        userIdToken: uId,
-      });
+      const { id }: User = await this.getUserByIdToken(uId);
       const getCurrentPost: Posts = await this.postsRepository.findOneBy({
         id: postId,
-        userId: getUserID.id,
+        userId: id,
       });
       const oldPostPhoto: string = getCurrentPost.photo;
       getCurrentPost.title = editFormData.title;
@@ -151,7 +128,7 @@ export class PostService {
       await this.postsRepository.save(getCurrentPost);
       const updated: Posts[] = await this.postsRepository.find({
         where: {
-          userId: getUserID.id,
+          userId: id,
         },
         relations: { user: true },
         order: {
@@ -165,22 +142,30 @@ export class PostService {
   }
   async deletePost(postId: number, uId: string): Promise<Posts[]> {
     try {
-      const getUserID: User = await this.userRepository.findOneBy({
-        userIdToken: uId,
-      });
+      const { id } = await this.getUserByIdToken(uId);
       await this.postsRepository.delete({
         id: postId,
-        userId: getUserID.id,
+        userId: id,
       });
       const getPosts: Posts[] = await this.postsRepository.find({
         where: {
-          userId: getUserID.id,
+          userId: id,
         },
         relations: {
           user: true,
         },
       });
       return getPosts;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+  private async getUserByIdToken(uId: string): Promise<User> {
+    try {
+      const user: User = await this.userRepository.findOneBy({
+        userIdToken: uId,
+      });
+      return user;
     } catch (error) {
       throw new Error(error.message);
     }
