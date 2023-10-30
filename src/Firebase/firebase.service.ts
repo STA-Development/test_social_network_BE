@@ -40,6 +40,12 @@ export class FirebaseApp {
   getAuth = (): firebase.auth.Auth => {
     return this.firebaseApp.auth();
   };
+  async userProfileUpdate(uId: string, url: string) {
+    const auth = this.getAuth();
+    await auth.updateUser(uId, {
+      photoURL: url,
+    });
+  }
   async uploadFile(file: Express.Multer.File): Promise<string> {
     const storage = firebase.storage();
     const bucket = storage.bucket();
@@ -59,5 +65,25 @@ export class FirebaseApp {
     });
     const fileRef = getStorage().bucket(bucketName).file(uniqueFileName);
     return getDownloadURL(fileRef);
+  }
+  async deleteFile(url: string) {
+    if (
+      url.split('/')[2] !== 'lh3.googleusercontent.com' &&
+      url.split('/')[1] !== 'butman.png'
+    ) {
+      const fileName = url.split('/')[7].split('?')[0];
+      const bucket = this.firebaseApp.storage().bucket();
+      const file = bucket.file(fileName);
+      if (file) {
+        try {
+          await file.delete();
+          return true;
+        } catch (error) {
+          if (error instanceof Error) {
+            throw new Error(error.message);
+          }
+        }
+      }
+    }
   }
 }

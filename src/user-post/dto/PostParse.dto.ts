@@ -1,6 +1,7 @@
-import { IsBoolean, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-export class PostDto {
+import { IsBoolean, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+
+export class PostParseDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -14,6 +15,6 @@ export class PostDto {
   description: string;
 
   @ApiProperty()
-  @IsString()
-  userId: string;
+  @IsBoolean()
+  delete: boolean;
 }

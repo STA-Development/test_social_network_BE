@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './authentication/auth.module';
+import { UserModule } from './user/user.module';
 import { UserPostModule } from './user-post/user-post.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,7 +9,7 @@ import { UserCommentModule } from './user-comment/user-comment.module';
 
 @Module({
   imports: [
-    AuthModule,
+    UserModule,
     UserPostModule,
     UserCommentModule,
     TypeOrmModule.forRootAsync({

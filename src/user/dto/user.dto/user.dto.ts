@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class ReqUser {
+export class UserDto {
   @IsString()
   name: string;
   @IsString()
@@ -8,5 +8,5 @@ export class ReqUser {
   @IsString()
   picture: string;
   @IsString()
-  user_id: string;
+  uId: string;
 }

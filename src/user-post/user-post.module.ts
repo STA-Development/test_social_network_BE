@@ -1,40 +1,23 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { PostController } from './controller/post.controller';
 import { PostService } from './service/post.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Posts } from './entities/Post.entity';
-import { PreAuthMiddleware } from '../Middleware/auth/auth.guard';
 import { FirebaseApp } from '../Firebase/firebase.service';
-import { User } from '../authentication/entities/user.entity';
+import { User } from '../user/entities/user.entity';
+import { PostRepository } from '../repositories/post.repository';
+import { UserRepository } from '../repositories/user.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Posts, User])],
   controllers: [PostController],
-  providers: [PostService, FirebaseApp],
+  providers: [
+    PostService,
+    FirebaseApp,
+    PostRepository,
+    UserRepository,
+    { provide: 'PostRepositoryInterface', useClass: PostRepository },
+    { provide: 'UserRepositoryInterface', useClass: UserRepository },
+  ],
 })
-export class UserPostModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(PreAuthMiddleware)
-      .exclude(
-        {
-          path: '/post/getAllPosts',
-          method: RequestMethod.GET,
-        },
-        {
-          path: 'post/getAllPostsLength',
-          method: RequestMethod.GET,
-        },
-        {
-          path: 'post/getAllPosts/:length',
-          method: RequestMethod.GET,
-        },
-      )
-      .forRoutes(PostController);
-  }
-}
+export class UserPostModule {}

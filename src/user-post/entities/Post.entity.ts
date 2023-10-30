@@ -8,7 +8,7 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { User } from '../../authentication/entities/user.entity';
+import { User } from '../../user/entities/user.entity';
 import { Comments } from '../../user-comment/entities/Comments.entity';
 
 @Entity()
