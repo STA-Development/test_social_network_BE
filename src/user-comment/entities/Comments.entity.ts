@@ -2,25 +2,28 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  JoinColumn,
-  OneToMany,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
-import { Comments } from '../../user-comment/entities/Comments.entity';
+import { Posts } from '../../user-post/entities/Post.entity';
 
 @Entity()
-export class Posts {
+export class Comments {
   @PrimaryGeneratedColumn()
   id: number;
   @Column()
-  title: string;
+  comment: string;
+
   @Column()
-  description: string;
-  @Column({ nullable: true })
-  photo: string;
+  postId: number;
+  @ManyToOne(() => Posts, (posts: Posts) => posts.comments, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'postId' })
+  post: Posts;
 
   @Column()
   userId: number;
@@ -30,9 +33,6 @@ export class Posts {
   })
   @JoinColumn({ name: 'userId' })
   user: User;
-
-  @OneToMany(() => Comments, (comments: Comments) => comments.postId)
-  comments: Comments[];
 
   @CreateDateColumn()
   createdAt: Date;
