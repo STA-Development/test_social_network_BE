@@ -47,6 +47,11 @@ export class PostController {
   ): Promise<Posts[]> {
     return this.postService.getNextFiveUserPosts(length, uId);
   }
+  @UseGuards(AuthGuard)
+  @Get('/userPostsLength')
+  getAllUserPostsLength(@User('uId') uId: string): Promise<number> {
+    return this.postService.getAllUserPostsLength(uId);
+  }
   @Get('/newsPagePosts')
   getAllPosts(): Promise<Posts[]> {
     return this.postService.getPostsForNewsPage();
@@ -58,11 +63,6 @@ export class PostController {
   @Get('/length')
   getAllPostsLength(): Promise<number> {
     return this.postService.getAllPostsLength();
-  }
-  @UseGuards(AuthGuard)
-  @Get('/userPostsLength')
-  getAllUserPostsLength(@User('uId') uId: string): Promise<number> {
-    return this.postService.getAllUserPostsLength(uId);
   }
   @UseGuards(AuthGuard)
   @Patch('edit/:postId')

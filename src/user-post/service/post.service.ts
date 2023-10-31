@@ -119,7 +119,7 @@ export class PostService {
     id: number,
     data: PostParseDto,
     photo: Express.Multer.File,
-  ) {
+  ): Promise<void> {
     const currentPost: Posts = await this.postRepository.findByCondition({
       id: postId,
       userId: id,

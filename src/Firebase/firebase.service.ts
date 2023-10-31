@@ -66,7 +66,7 @@ export class FirebaseApp {
     const fileRef = getStorage().bucket(bucketName).file(uniqueFileName);
     return getDownloadURL(fileRef);
   }
-  async deleteFile(url: string) {
+  async deleteFile(url: string): Promise<void> {
     if (
       url.split('/')[2] !== 'lh3.googleusercontent.com' &&
       url.split('/')[1] !== 'butman.png'
@@ -77,7 +77,6 @@ export class FirebaseApp {
       if (file) {
         try {
           await file.delete();
-          return true;
         } catch (error) {
           if (error instanceof Error) {
             throw new Error(error.message);

@@ -30,7 +30,7 @@ export class UserController {
     file: Express.Multer.File,
     @User()
     user: UserDto,
-  ) {
+  ): Promise<string> {
     return this.userService.changeUserAvatar(file, user.uId, user.picture);
   }
 }
